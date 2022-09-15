@@ -8,7 +8,7 @@ const Location = use('App/Models/Location')
 const Device = use('App/Models/Device')
 const domain = 'https://airpointer-2021-00745.recordum.net'
 const excelJS = require("exceljs");
-
+const Helpers = use('Helpers')
 
 class AirpointerController {
   cv(x,bm){
@@ -34,6 +34,27 @@ class AirpointerController {
     }
   }
   
+  async saveimg({response,request}){
+    const {names} = request.all();
+    const img = request.file('img',{
+      types: ['image'],
+      size: '2mb'
+    });
+    if (img) {
+      const dir = Helpers.publicPath(`gambar/${moment().format('DDMMYY')}`)
+      console.log(dir);
+      if (!fs.existsSync(dir)){
+          fs.mkdirSync(dir);
+      }
+      await img.move(dir, {
+        name: `${names}.${img.extname}`,
+        overwrite: true
+      })
+      return response.json({status: 'success'});
+    }
+    console.log(img);
+  }
+
   async pushData({request, response}){
     const {img} = request.all();
     // const {start,end} = request.all();

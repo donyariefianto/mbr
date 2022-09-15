@@ -27,10 +27,7 @@ Route.post('/pushData','AirpointerController.pushData')
 Route.post('/location','AirpointerController.Location')
 Route.post('/device','AirpointerController.device')
 Route.get('/report/:tgl/:id','AirpointerController.CreateReport')
-Route.group(() => {
-Route.get('/sched/term','AirpointerController.schedule')
-Route.get('/sched/lop','AirpointerController.lop')
-}).prefix('datasets')
+ Route.post('/simpanGambar','AirpointerController.saveimg')
 
 Route.get('/', ({ response }) => {
   response.redirect('/api', true)
