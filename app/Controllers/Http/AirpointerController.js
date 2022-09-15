@@ -41,7 +41,7 @@ class AirpointerController {
       size: '2mb'
     });
     if (img) {
-      const dir = Helpers.publicPath(`gambar/${moment().format('DDMMYY')}`)
+      const dir = Helpers.publicPath(`snapshots/${moment().format('DDMMYY')}`)
       console.log(dir);
       if (!fs.existsSync(dir)){
           fs.mkdirSync(dir);
