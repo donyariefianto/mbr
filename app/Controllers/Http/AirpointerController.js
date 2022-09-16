@@ -215,251 +215,253 @@ class AirpointerController {
     if (data.length > 0) {
       const units = await Database.from('units')
       const ispu9or15 = await Database.raw(`SELECT * FROM mobiair_raw WHERE device_id = "${params.id}"  and ispu_status = 15 OR ispu_status = 9 ORDER BY id desc LIMIT 1`);
-      const ispu12hours = await Database.from('mobiair_raw').where({ispu_status: 'H'}).where({'device_id' : params.id}).orderBy('id', 'desc').limit(12)
-      const locs =  await Database.raw('SELECT loc_abbr,loc_addr,lat,lng,start_date,end_date FROM locations WHERE DATE_FORMAT(start_date, "%Y-%m-%d") <= DATE_FORMAT(now(), "%Y-%m-%d") AND DATE_FORMAT(end_date, "%Y-%m-%d") >= DATE_FORMAT(now(), "%Y-%m-%d") limit 1');
-      for (const u of units) {
-        param.push(u.param)
-        baku_mutu.push(u.baku_mutu)
-        unit.push(u.unit) 
-        params_string.push(u.param_string)
-      }
-      
-      for (const iterator of ispu12hours) {
-        hours12.push(
-          {
-            ispu_datetime_gmt_plus: moment(iterator.ispu_datetime_gmt_plus).format('llll'),
-            ispu_value: iterator.ispu_value,
-            critical_pollutant: {
-              critical_pollutant:iterator.critical_pollutant,
-              cp_value:iterator.cp_value,
-              unit:unit[param.indexOf(ispu_constv[ispu_const.indexOf(iterator.critical_pollutant)])]
-            },
-            ispu_description:(iterator.ispu_desc.substr(1,iterator.ispu_desc.length-2)).split(','),
-            ispu_color:(iterator.ispu_color.substr(1,iterator.ispu_color.length-2)).split(','),
-          }        
-        )
-        AT.push({
-          ispu_datetime_gmt_plus:moment(iterator.ispu_datetime_gmt_plus).format('llll'),
-          value:iterator.ambient_temp,
-          unit:unit[param.indexOf('ambient_temp')],
-          // color:iterator.pm25rt_value > baku_mutu[param.indexOf('pm1rt_value')] ? '#FF6B6B' : '#BDD0FB'
-        })
-        CT.push({
-          ispu_datetime_gmt_plus:moment(iterator.ispu_datetime_gmt_plus).format('llll'),
-          value:iterator.cool_temp,
-          unit:unit[param.indexOf('cool_temp')],
-          // color:iterator.pm25rt_value > baku_mutu[param.indexOf('pm1rt_value')] ? '#FF6B6B' : '#BDD0FB'
-        })
-        RH.push({
-          ispu_datetime_gmt_plus:moment(iterator.ispu_datetime_gmt_plus).format('llll'),
-          value:iterator.r_hum,
-          unit:unit[param.indexOf('r_hum')],
-          // color:iterator.pm25rt_value > baku_mutu[param.indexOf('pm1rt_value')] ? '#FF6B6B' : '#BDD0FB'
-        })
-        BP.push({
-          ispu_datetime_gmt_plus:moment(iterator.ispu_datetime_gmt_plus).format('llll'),
-          value:iterator.barometric_p,
-          unit:unit[param.indexOf('barometric_p')],
-          // color:iterator.pm25rt_value > baku_mutu[param.indexOf('pm1rt_value')] ? '#FF6B6B' : '#BDD0FB'
-        })
-        Flow.push({
-          ispu_datetime_gmt_plus:moment(iterator.ispu_datetime_gmt_plus).format('llll'),
-          value:iterator.flow,
-          unit:unit[param.indexOf('flow')],
-          // color:iterator.pm25rt_value > baku_mutu[param.indexOf('pm1rt_value')] ? '#FF6B6B' : '#BDD0FB'
-        })
-        FRH.push({
-          ispu_datetime_gmt_plus:moment(iterator.ispu_datetime_gmt_plus).format('llll'),
-          value:iterator.frh,
-          unit:unit[param.indexOf('frh')],
-          // color:iterator.pm25rt_value > baku_mutu[param.indexOf('pm1rt_value')] ? '#FF6B6B' : '#BDD0FB'
-        })
-        FT.push({
-          ispu_datetime_gmt_plus:moment(iterator.ispu_datetime_gmt_plus).format('llll'),
-          value:iterator.ft,
-          unit:unit[param.indexOf('ft')],
-          // color:iterator.pm25rt_value > baku_mutu[param.indexOf('pm1rt_value')] ? '#FF6B6B' : '#BDD0FB'
-        })
-        PM1.push({
-          ispu_datetime_gmt_plus:moment(iterator.ispu_datetime_gmt_plus).format('llll'),
-          ispu:iterator.ispu_pm1rt,
-          value:iterator.pm1rt_value,
-          cv:iterator.pm1rt_value,
-          unit:'μg/m3',
-          unit_cv:'μg/m3',
-          color:iterator.pm1rt_value > baku_mutu[param.indexOf('pm1rt_value')] ? '#FF6B6B' : '#BDD0FB'
-        })
-        PM25.push({
-          ispu_datetime_gmt_plus:moment(iterator.ispu_datetime_gmt_plus).format('llll'),
-          ispu:iterator.ispu_pm25rt,
-          value:iterator.pm25rt_value,
-          cv:iterator.pm25rt_value,
-          unit:unit[param.indexOf('pm25rt_value')],
-          unit_cv:unit[param.indexOf('pm25rt_value')],
-          color:iterator.pm25rt_value > baku_mutu[param.indexOf('pm25rt_value')] ? '#FF6B6B' : '#BDD0FB'
-        })
-        PM10.push({
-          ispu_datetime_gmt_plus:moment(iterator.ispu_datetime_gmt_plus).format('llll'),
-          ispu:iterator.ispu_pm10rt,
-          value:iterator.pm1rt_value,
-          cv:iterator.pm1rt_value,
-          unit:'μg/m3',
-          unit_cv:'μg/m3',
-          color:iterator.pm10rt_value > baku_mutu[param.indexOf('pm10rt_value')] ? '#FF6B6B' : '#BDD0FB'
-        })
-        NO2.push({
-          ispu_datetime_gmt_plus:moment(iterator.ispu_datetime_gmt_plus).format('llll'),
-          ispu:iterator.ispu_no2,
-          value:iterator.no2_value,
-          cv:iterator.no2_cv,
-          unit:unit[param.indexOf('no2_value')],
-          unit_cv:unit[param.indexOf('no2_cv')],
-          color:iterator.no2_cv > baku_mutu[param.indexOf('no2_cv')] ? '#FF6B6B' : '#BDD0FB'
-        })
-        O3.push({
-          ispu_datetime_gmt_plus:moment(iterator.ispu_datetime_gmt_plus).format('llll'),
-          ispu:iterator.ispu_o3,
-          value:iterator.o3_value,
-          cv:iterator.o3_cv,
-          unit:unit[param.indexOf('o3_value')],
-          unit_cv:unit[param.indexOf('o3_cv')],
-          color:iterator.o3_cv > baku_mutu[param.indexOf('o3_cv')] ? '#FF6B6B' : '#BDD0FB'
-        })
-        CO.push({
-          ispu_datetime_gmt_plus:moment(iterator.ispu_datetime_gmt_plus).format('llll'),
-          ispu:iterator.ispu_co,
-          value:iterator.co_value,
-          cv:iterator.co_cv,
-          unit:unit[param.indexOf('co_value')],
-          unit_cv:unit[param.indexOf('co_cv')],
-          color:iterator.co_cv > baku_mutu[param.indexOf('co_cv')] ? '#FF6B6B' : '#BDD0FB'
-        })
-        SO2.push({
-          ispu_datetime_gmt_plus:moment(iterator.ispu_datetime_gmt_plus).format('llll'),
-          ispu:iterator.ispu_so2,
-          value:iterator.so2_value,
-          cv:iterator.so2_cv,
-          unit:unit[param.indexOf('so2_value')],
-          unit_cv:unit[param.indexOf('so2_cv')],
-          color:iterator.so2_cv > baku_mutu[param.indexOf('so2_cv')] ? '#FF6B6B' : '#BDD0FB'
-        })
-      }
-      const concentration = [
-        {
-          parameter:"PM1",
-          isview:1,
-          data:PM1,
-        },
-        {
-          parameter:params_string[param.indexOf('pm25rt_value')],
-          isview:1,
-          data:PM25,
-        },
-        {
-          parameter:"PM10",
-          isview:1,
-          data:PM10,
-        },
-        {
-          parameter:params_string[param.indexOf('no2_value')],
-          isview:1,
-          data:NO2,
-        },
-        {
-          parameter:params_string[param.indexOf('so2_value')],
-          isview:1,
-          data:SO2,
-        },
-        {
-          parameter:params_string[param.indexOf('o3_value')],
-          isview:1,
-          data:O3,
-        },
-        {
-          parameter:params_string[param.indexOf('co_value')],
-          isview:1,
-          data:CO,
-        },
-        {
-          parameter:params_string[param.indexOf('ambient_temp')],
-          isview:1,
-          data:AT,
-        },
-        {
-          parameter:params_string[param.indexOf('cool_temp')],
-          isview:0,
-          data:CT,
-        },
-        {
-          parameter:params_string[param.indexOf('r_hum')],
-          isview:1,
-          data:RH,
-        },
-        {
-          parameter:params_string[param.indexOf('barometric_p')],
-          isview:1,
-          data:BP,
-        },
-        {
-          parameter:params_string[param.indexOf('flow')],
-          isview:0,
-          data:Flow,
-        },
-        {
-          parameter:params_string[param.indexOf('frh')],
-          isview:0,
-          data:FRH,
-        },
-        {
-          parameter:params_string[param.indexOf('ft')],
-          isview:0,
-          data:FT,
+      if (ispu9or15.length > 0) {
+        const ispu12hours = await Database.from('mobiair_raw').where({ispu_status: 'H'}).where({'device_id' : params.id}).orderBy('id', 'desc').limit(12)
+        const locs =  await Database.raw('SELECT loc_abbr,loc_addr,lat,lng,start_date,end_date FROM locations WHERE DATE_FORMAT(start_date, "%Y-%m-%d") <= DATE_FORMAT(now(), "%Y-%m-%d") AND DATE_FORMAT(end_date, "%Y-%m-%d") >= DATE_FORMAT(now(), "%Y-%m-%d") limit 1');
+        for (const u of units) {
+          param.push(u.param)
+          baku_mutu.push(u.baku_mutu)
+          unit.push(u.unit) 
+          params_string.push(u.param_string)
         }
-      ]
-      const header = {
-        cool_temp: data[0].cool_temp,
-        ft:data[0].ft,
-        frh:data[0].frh,
-        flow:data[0].flow,
-        airpointer_status:{
-          color:moment(data[0].ispu_datetime_gmt_plus) < moment().subtract(24, 'hours') ? '#ff0000' : '#30D158',
-          last_data: `Last data ${moment(data[0].ispu_datetime_gmt_plus).fromNow()}`
-        },
-        met_one:{
-          color:moment(ispu9or15[0].ispu_datetime_gmt_plus) < moment().subtract(24, 'hours') ? '#ff0000' : '#30D158',
-          last_data: `Last data ${moment(data[0].ispu_datetime_gmt_plus).fromNow()}`
-        },
-        current_location:{
-          address:locs[0][0].loc_addr,
-          abbrevation:locs[0][0].loc_abbr,
-          point:`${locs[0][0].lat},${locs[0][0].lng}`,
-          start:moment(locs[0][0].start_date).format('llll'),
-          end:moment(locs[0][0].end_date).format('llll'),        
-        },
-        ispu:{
-          ispu_datetime_gmt_plus: moment(ispu9or15[0][0].ispu_datetime_gmt_plus).format('llll'),
-          ispu_value:ispu9or15[0][0].ispu_value,
-          critical_pollutant:{
-            critical_pollutant:ispu9or15[0][0].critical_pollutant,
-            cp_value:ispu9or15[0][0].cp_value,
-            unit:unit[param.indexOf(ispu_constv[ispu_const.indexOf(ispu9or15[0][0].critical_pollutant)])]
+        
+        for (const iterator of ispu12hours) {
+          hours12.push(
+            {
+              ispu_datetime_gmt_plus: moment(iterator.ispu_datetime_gmt_plus).format('llll'),
+              ispu_value: iterator.ispu_value,
+              critical_pollutant: {
+                critical_pollutant:iterator.critical_pollutant,
+                cp_value:iterator.cp_value,
+                unit:unit[param.indexOf(ispu_constv[ispu_const.indexOf(iterator.critical_pollutant)])]
+              },
+              ispu_description:(iterator.ispu_desc.substr(1,iterator.ispu_desc.length-2)).split(','),
+              ispu_color:(iterator.ispu_color.substr(1,iterator.ispu_color.length-2)).split(','),
+            }        
+          )
+          AT.push({
+            ispu_datetime_gmt_plus:moment(iterator.ispu_datetime_gmt_plus).format('llll'),
+            value:iterator.ambient_temp,
+            unit:unit[param.indexOf('ambient_temp')],
+            // color:iterator.pm25rt_value > baku_mutu[param.indexOf('pm1rt_value')] ? '#FF6B6B' : '#BDD0FB'
+          })
+          CT.push({
+            ispu_datetime_gmt_plus:moment(iterator.ispu_datetime_gmt_plus).format('llll'),
+            value:iterator.cool_temp,
+            unit:unit[param.indexOf('cool_temp')],
+            // color:iterator.pm25rt_value > baku_mutu[param.indexOf('pm1rt_value')] ? '#FF6B6B' : '#BDD0FB'
+          })
+          RH.push({
+            ispu_datetime_gmt_plus:moment(iterator.ispu_datetime_gmt_plus).format('llll'),
+            value:iterator.r_hum,
+            unit:unit[param.indexOf('r_hum')],
+            // color:iterator.pm25rt_value > baku_mutu[param.indexOf('pm1rt_value')] ? '#FF6B6B' : '#BDD0FB'
+          })
+          BP.push({
+            ispu_datetime_gmt_plus:moment(iterator.ispu_datetime_gmt_plus).format('llll'),
+            value:iterator.barometric_p,
+            unit:unit[param.indexOf('barometric_p')],
+            // color:iterator.pm25rt_value > baku_mutu[param.indexOf('pm1rt_value')] ? '#FF6B6B' : '#BDD0FB'
+          })
+          Flow.push({
+            ispu_datetime_gmt_plus:moment(iterator.ispu_datetime_gmt_plus).format('llll'),
+            value:iterator.flow,
+            unit:unit[param.indexOf('flow')],
+            // color:iterator.pm25rt_value > baku_mutu[param.indexOf('pm1rt_value')] ? '#FF6B6B' : '#BDD0FB'
+          })
+          FRH.push({
+            ispu_datetime_gmt_plus:moment(iterator.ispu_datetime_gmt_plus).format('llll'),
+            value:iterator.frh,
+            unit:unit[param.indexOf('frh')],
+            // color:iterator.pm25rt_value > baku_mutu[param.indexOf('pm1rt_value')] ? '#FF6B6B' : '#BDD0FB'
+          })
+          FT.push({
+            ispu_datetime_gmt_plus:moment(iterator.ispu_datetime_gmt_plus).format('llll'),
+            value:iterator.ft,
+            unit:unit[param.indexOf('ft')],
+            // color:iterator.pm25rt_value > baku_mutu[param.indexOf('pm1rt_value')] ? '#FF6B6B' : '#BDD0FB'
+          })
+          PM1.push({
+            ispu_datetime_gmt_plus:moment(iterator.ispu_datetime_gmt_plus).format('llll'),
+            ispu:iterator.ispu_pm1rt,
+            value:iterator.pm1rt_value,
+            cv:iterator.pm1rt_value,
+            unit:'μg/m3',
+            unit_cv:'μg/m3',
+            color:iterator.pm1rt_value > baku_mutu[param.indexOf('pm1rt_value')] ? '#FF6B6B' : '#BDD0FB'
+          })
+          PM25.push({
+            ispu_datetime_gmt_plus:moment(iterator.ispu_datetime_gmt_plus).format('llll'),
+            ispu:iterator.ispu_pm25rt,
+            value:iterator.pm25rt_value,
+            cv:iterator.pm25rt_value,
+            unit:unit[param.indexOf('pm25rt_value')],
+            unit_cv:unit[param.indexOf('pm25rt_value')],
+            color:iterator.pm25rt_value > baku_mutu[param.indexOf('pm25rt_value')] ? '#FF6B6B' : '#BDD0FB'
+          })
+          PM10.push({
+            ispu_datetime_gmt_plus:moment(iterator.ispu_datetime_gmt_plus).format('llll'),
+            ispu:iterator.ispu_pm10rt,
+            value:iterator.pm1rt_value,
+            cv:iterator.pm1rt_value,
+            unit:'μg/m3',
+            unit_cv:'μg/m3',
+            color:iterator.pm10rt_value > baku_mutu[param.indexOf('pm10rt_value')] ? '#FF6B6B' : '#BDD0FB'
+          })
+          NO2.push({
+            ispu_datetime_gmt_plus:moment(iterator.ispu_datetime_gmt_plus).format('llll'),
+            ispu:iterator.ispu_no2,
+            value:iterator.no2_value,
+            cv:iterator.no2_cv,
+            unit:unit[param.indexOf('no2_value')],
+            unit_cv:unit[param.indexOf('no2_cv')],
+            color:iterator.no2_cv > baku_mutu[param.indexOf('no2_cv')] ? '#FF6B6B' : '#BDD0FB'
+          })
+          O3.push({
+            ispu_datetime_gmt_plus:moment(iterator.ispu_datetime_gmt_plus).format('llll'),
+            ispu:iterator.ispu_o3,
+            value:iterator.o3_value,
+            cv:iterator.o3_cv,
+            unit:unit[param.indexOf('o3_value')],
+            unit_cv:unit[param.indexOf('o3_cv')],
+            color:iterator.o3_cv > baku_mutu[param.indexOf('o3_cv')] ? '#FF6B6B' : '#BDD0FB'
+          })
+          CO.push({
+            ispu_datetime_gmt_plus:moment(iterator.ispu_datetime_gmt_plus).format('llll'),
+            ispu:iterator.ispu_co,
+            value:iterator.co_value,
+            cv:iterator.co_cv,
+            unit:unit[param.indexOf('co_value')],
+            unit_cv:unit[param.indexOf('co_cv')],
+            color:iterator.co_cv > baku_mutu[param.indexOf('co_cv')] ? '#FF6B6B' : '#BDD0FB'
+          })
+          SO2.push({
+            ispu_datetime_gmt_plus:moment(iterator.ispu_datetime_gmt_plus).format('llll'),
+            ispu:iterator.ispu_so2,
+            value:iterator.so2_value,
+            cv:iterator.so2_cv,
+            unit:unit[param.indexOf('so2_value')],
+            unit_cv:unit[param.indexOf('so2_cv')],
+            color:iterator.so2_cv > baku_mutu[param.indexOf('so2_cv')] ? '#FF6B6B' : '#BDD0FB'
+          })
+        }
+        const concentration = [
+          {
+            parameter:"PM1",
+            isview:1,
+            data:PM1,
           },
-          ispu_description:(ispu9or15[0][0].ispu_desc.substr(1,ispu9or15[0][0].ispu_desc.length-2)).split(','),
-          ispu_color:(ispu9or15[0][0].ispu_color.substr(1,ispu9or15[0][0].ispu_color.length-2)).split(','),
-        },
-      }
-      
-      const detail = {
-        ispu_last_12h:hours12,
-        concentration: concentration
-      }
+          {
+            parameter:params_string[param.indexOf('pm25rt_value')],
+            isview:1,
+            data:PM25,
+          },
+          {
+            parameter:"PM10",
+            isview:1,
+            data:PM10,
+          },
+          {
+            parameter:params_string[param.indexOf('no2_value')],
+            isview:1,
+            data:NO2,
+          },
+          {
+            parameter:params_string[param.indexOf('so2_value')],
+            isview:1,
+            data:SO2,
+          },
+          {
+            parameter:params_string[param.indexOf('o3_value')],
+            isview:1,
+            data:O3,
+          },
+          {
+            parameter:params_string[param.indexOf('co_value')],
+            isview:1,
+            data:CO,
+          },
+          {
+            parameter:params_string[param.indexOf('ambient_temp')],
+            isview:1,
+            data:AT,
+          },
+          {
+            parameter:params_string[param.indexOf('cool_temp')],
+            isview:0,
+            data:CT,
+          },
+          {
+            parameter:params_string[param.indexOf('r_hum')],
+            isview:1,
+            data:RH,
+          },
+          {
+            parameter:params_string[param.indexOf('barometric_p')],
+            isview:1,
+            data:BP,
+          },
+          {
+            parameter:params_string[param.indexOf('flow')],
+            isview:0,
+            data:Flow,
+          },
+          {
+            parameter:params_string[param.indexOf('frh')],
+            isview:0,
+            data:FRH,
+          },
+          {
+            parameter:params_string[param.indexOf('ft')],
+            isview:0,
+            data:FT,
+          }
+        ]
+        const header = {
+          cool_temp: data[0].cool_temp,
+          ft:data[0].ft,
+          frh:data[0].frh,
+          flow:data[0].flow,
+          airpointer_status:{
+            color:moment(data[0].ispu_datetime_gmt_plus) < moment().subtract(24, 'hours') ? '#ff0000' : '#30D158',
+            last_data: `Last data ${moment(data[0].ispu_datetime_gmt_plus).fromNow()}`
+          },
+          met_one:{
+            color:moment(ispu9or15[0].ispu_datetime_gmt_plus) < moment().subtract(24, 'hours') ? '#ff0000' : '#30D158',
+            last_data: `Last data ${moment(data[0].ispu_datetime_gmt_plus).fromNow()}`
+          },
+          current_location:{
+            address:locs[0][0].loc_addr,
+            abbrevation:locs[0][0].loc_abbr,
+            point:`${locs[0][0].lat},${locs[0][0].lng}`,
+            start:moment(locs[0][0].start_date).format('llll'),
+            end:moment(locs[0][0].end_date).format('llll'),        
+          },
+          ispu:{
+            ispu_datetime_gmt_plus: moment(ispu9or15[0][0].ispu_datetime_gmt_plus).format('llll'),
+            ispu_value:ispu9or15[0][0].ispu_value,
+            critical_pollutant:{
+              critical_pollutant:ispu9or15[0][0].critical_pollutant,
+              cp_value:ispu9or15[0][0].cp_value,
+              unit:unit[param.indexOf(ispu_constv[ispu_const.indexOf(ispu9or15[0][0].critical_pollutant)])]
+            },
+            ispu_description:(ispu9or15[0][0].ispu_desc.substr(1,ispu9or15[0][0].ispu_desc.length-2)).split(','),
+            ispu_color:(ispu9or15[0][0].ispu_color.substr(1,ispu9or15[0][0].ispu_color.length-2)).split(','),
+          },
+        }
+        
+        const detail = {
+          ispu_last_12h:hours12,
+          concentration: concentration
+        }
 
-      const json = {
-        status: 'success',
-        header:header,
-        detail:detail,
+        const json = {
+          status: 'success',
+          header:header,
+          detail:detail,
+        }
+        return response.json(json);
       }
-      return response.json(json);
     }else{
       return response.status(400).send({status:'error',data:[],message:'data not available'})
     }
