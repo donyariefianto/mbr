@@ -27,7 +27,7 @@ Route.post('/pushData','AirpointerController.pushData')
 Route.post('/location','AirpointerController.Location')
 Route.post('/device','AirpointerController.device')
 Route.get('/report/:tgl/:id','AirpointerController.CreateReport')
- Route.post('/simpanGambar','AirpointerController.saveimg')
+Route.post('/simpanGambar','AirpointerController.saveimg')
 
 Route.get('/', ({ response }) => {
   response.redirect('/api', true)

@@ -26,13 +26,11 @@
             <tr>
               <td>Device ID</td>
               <td>Location</td>
+              <td>ispu status</td>
               <td>Ispu GMT</td>
               <td>Ispu GMT+</td>
               <td>Ispu Value</td>
               <td>Ispu Deskripsi</td>
-              <td>CONVERTED value</td>
-              <td>Device Value</td>
-              <td>Status</td>
               <td>Image</td>
             </tr>
             </thead>
@@ -41,14 +39,12 @@
             <tr>
               <td> {{ post.device_id }} </td>
               <td> {{ post.location }} </td>
+              <td> {{ post.ispu_status }} </td>
               <td> {{ post.ispu_datetime_gmt }} </td>
               <td> {{ post.ispu_datetime_gmt_plus }} </td>
-              <td> {{ post.ispu_value }} | {{ post.ispu_desc }} | {{ post.ispu_color }} | {{ post.ispu_status }}  </td>
-              <td>  </td>
-              <td> {{ post.ispu_value }} | {{ post.ispu_desc }} | {{ post.ispu_color }} | {{ post.ispu_status }}</td>
-              <td> {{ post.no2_cv }} | {{ post.o3_cv }} | {{ post.so2_cv }} | {{ post.co_cv }} </td>
-              <td> {{ post.ispu_value }} | {{ post.ispu_desc }} | {{ post.ispu_color }} | {{ post.ispu_status }} </td>
-              <td></td>
+              <td> {{ post.ispu_value }} </td>
+              <td> {{ post.ispu_desc }} </td>
+              <td> {{ post.image }} </td>
             </tr>
             @endeach
             </tbody>
