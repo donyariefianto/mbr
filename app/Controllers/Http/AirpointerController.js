@@ -633,7 +633,7 @@ class AirpointerController {
         },
         {
           parameter:"cool_temp",
-          isview:1,
+          isview:0,
           data:CT,
         },
         {
