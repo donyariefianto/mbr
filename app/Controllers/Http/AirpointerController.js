@@ -1011,8 +1011,8 @@ class AirpointerController {
                 deleted_at : null
                 })
         }
-        await ExternalDataMongo.deleteAllData(token)
-        await mongoCollection.insertMany(vl)
+        // await ExternalDataMongo.deleteAllData(token)
+        // await mongoCollection.insertMany(vl)
         return response.json(vl)
     } catch (error) {
         return response.api(500,"Error : " + error.message)
