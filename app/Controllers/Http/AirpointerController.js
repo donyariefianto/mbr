@@ -951,8 +951,73 @@ class AirpointerController {
         "features": hasil
     }
     return response.json(Bahan)
-}
+  }
 
+  async Monipad({response,request}){
+    const {userId,token} = request.all();
+    try {
+        var axios = require('axios');
+        const https = require('https');
+        const httpsAgent = new https.Agent({ rejectUnauthorized: false })        
+        var qs = require('qs');
+        var data = qs.stringify({
+        'user': 'kominfo',
+        'pass': 'e4170edb9759b6579dc850a4d38affc68204cf5f5cff724d90f0a921460a9d7b' 
+        });
+        var config = {
+        method: 'post',
+        url: 'https://monipad.dipendajatim.go.id/monipad/index.php/ws/pad/getDataTotal',
+        headers: { 
+            'Content-Type': 'application/x-www-form-urlencoded', 
+            'Cookie': 'ci_session=fapininug3rjg74lrhqgq5g55f59is0t'
+        },
+        httpsAgent: httpsAgent,
+        data : data
+        };
+        var vl = []
+
+        var d = await axios(config)
+        const vld_token = await Database.from('external_data_layers').
+        select('id').where({'token':token,user_id:Number(userId)})
+        for (const [numb,i] of d.data.data.pad.entries()) {
+            vl.push({
+                "userId":Number(userId),
+                "externalDataId":vld_token[0].id,
+                "externalDataToken":token,
+                "detail":{
+                    "Custom_Unique_ID":numb+1,
+                    "Data_Date": moment().format('YYYY-MM-DD'),
+                    "Label":i.LABEL,
+                    "SKT":i.SKT,
+                    "Sisa_Hari":d.data.data.sisahari,
+                    "Target":Number(i.TARGET),
+                    "Hari_Lalu":Number(i.HARILALU),
+                    "Pro_Hari_Lalu":Number(i.PRO_HARILALU),
+                    "Jumlah":Number(i.JUMLAH),
+                    "Pro":Number(i.PROSEN),
+                    "Hari_Ini":Number(i.HRINI),
+                    "Pro_Hari_Ini":Number(i.PROHRINI),
+                    "Kurang":Number(i.KURANG),
+                    "Pro_Kurang":Number(i.PROKURANG),
+                    "Icon_Dev":i.KURANG > 0 ? 'minus-circle' : 'plus-circle',
+                    "Color_Dev":i.KURANG > 0 ? 'red' : 'green',
+                    "Deviasi":i.JUMLAH - i.TARGET,
+                    "Icon_pro_dev":'percentage',
+                    "Color_Pro_Dev":i.KURANG > 0 ? 'red' : 'green',
+                    "Pro_Dev":Number((i.JUMLAH / i.TARGET * 100).toFixed(2)),
+                    },
+                created_at : new Date(), 
+                updated_at : new Date(), 
+                deleted_at : null
+                })
+        }
+        await ExternalDataMongo.deleteAllData(token)
+        await mongoCollection.insertMany(vl)
+        return response.json(vl)
+    } catch (error) {
+        return response.api(500,"Error : " + error.message)
+    }
+  }
 
 }
 

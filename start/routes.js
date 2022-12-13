@@ -18,6 +18,7 @@ const Route = use('Route')
 
 // Route.on('/').render({data:'a'})
 Route.get('/bahanpokok','AirpointerController.BahanPokok')
+Route.get('/monipad','AirpointerController.Monipad')
 Route.get('/device','AirpointerController.getDevice')
 Route.get('/location/:id','AirpointerController.getLocations')
 Route.get('/airpointer','AirpointerController.AirpointerData')
