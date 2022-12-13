@@ -1015,7 +1015,7 @@ class AirpointerController {
         // await mongoCollection.insertMany(vl)
         return response.json(vl)
     } catch (error) {
-        return response.api(500,"Error : " + error.message)
+        return response.status(500).json({"Error" : error.message})
     }
   }
 
