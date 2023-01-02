@@ -37,3 +37,4 @@ Route.get('/', ({ response }) => {
 Route.get('/api', ({ response }) => {
   return response.json({status: 200,messages:'mobiair server'})
 })
+//https://stream.cctv.malangkota.go.id/WebRTCApp/streams/195874189915723862555674.m3u8

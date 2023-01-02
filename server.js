@@ -23,3 +23,15 @@ new Ignitor(require('@adonisjs/fold'))
   .appRoot(__dirname)
   .fireHttpServer()
   .catch(console.error)
+
+  
+const Env = use('Env')
+
+if (Env.get('RUN_TASK', "false")=="true") {
+  const scheduler = use('Adonis/Addons/Scheduler')
+  scheduler.run()
+  console.log('Task are running')
+} else {
+  console.log('run on localhost')
+  console.log('Task are halted')
+}
