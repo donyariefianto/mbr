@@ -17,8 +17,6 @@
 const Route = use('Route')
 
 // Route.on('/').render({data:'a'})
-Route.get('/bahanpokok','AirpointerController.BahanPokok')
-Route.get('/monipad','AirpointerController.Monipad')
 Route.get('/device','AirpointerController.getDevice')
 Route.get('/location/:id','AirpointerController.getLocations')
 Route.get('/airpointer','AirpointerController.AirpointerData')
@@ -30,11 +28,10 @@ Route.post('/device','AirpointerController.device')
 Route.get('/report/:tgl/:id','AirpointerController.CreateReport')
 Route.post('/simpanGambar','AirpointerController.saveimg')
 
-Route.get('/', ({ response }) => {
-  response.redirect('/api', true)
-})
+// Route.get('/', ({ response }) => {
+//   response.redirect('/api')
+// })
 
 Route.get('/api', ({ response }) => {
   return response.json({status: 200,messages:'mobiair server'})
 })
-//https://stream.cctv.malangkota.go.id/WebRTCApp/streams/195874189915723862555674.m3u8
