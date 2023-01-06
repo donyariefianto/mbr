@@ -36,23 +36,24 @@ class AirpointerController {
   
   async saveimg({response,request}){
     const {names} = request.all();
-    const img = request.file('img',{
-      types: ['image'],
-      size: '2mb'
-    });
-    if (img) {
-      const dir = Helpers.publicPath(`snapshots/${moment().format('DDMMYY')}`)
-      console.log(dir);
-      if (!fs.existsSync(dir)){
-          fs.mkdirSync(dir);
+    try {
+      const img = request.file('img',{
+        types: ['image'],
+        size: '2mb'
+      });
+      if (img) {
+        const dir = Helpers.publicPath(`snapshots/${moment().format('DDMMYY')}`)
+        console.log(dir);
+        if (!fs.existsSync(dir)){
+            fs.mkdirSync(dir);
+        }
+        var file = fs.readFileSync(img.tmpPath);
+        fs.writeFileSync(`${dir}/${names}.${img.extname}`, file);
+        return response.json({status: 'success'});
       }
-      await img.move(dir, {
-        name: `${names}.${img.extname}`,
-        overwrite: true
-      })
-      return response.json({status: 'success'});
+    } catch (error) {
+      return console.log(error.message);
     }
-    console.log(img);
   }
 
   async pushData({request, response}){
