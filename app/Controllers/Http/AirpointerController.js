@@ -132,36 +132,36 @@ class AirpointerController {
     data.location = gmtLoc[0].loc_abbr
     data.gmt_plus = gmtLoc[0].gmt_plus
     data.ispu_datetime_gmt =  moment().subtract(gmtDevice[0].default_gmt, 'hours').format('YYYY-MM-DD,HH:mm')
-    data.pm25rt_value = a[min][15]
-    data.r_hum = a[min][22]
+    data.pm25rt_value = a[min][d[min].indexOf('ConcRT_all')]
+    data.r_hum = a[min][d[min].indexOf('RH')]
     data.ispu_datetime_gmt_plus =  moment(new Date(gmtp)).add(gmtLoc[0].gmt_plus,'hours').format('YYYY-MM-DD HH:mm');
     data.ispu_value = Math.max(...polutant)
     data.critical_pollutant = polutant_v[polutant.indexOf(`${Math.max(...polutant)}`)]
-    data.dev_status = a[min][23]
+    data.dev_status = a[min][d[min].indexOf('Status')]
     data.cp_value = cp_v[polutant.indexOf(`${Math.max(...polutant)}`)]
-    data.no_value = a[min][0]
-    data.no2_value = a[min][1] 
-    data.no2_cv = a[min][2]
-    data.nox_value = a[min][3]
-    data.co_value = a[min][4]
-    data.co_cv = a[min][5]
-    data.o3_value = a[min][6]
-    data.o3_cv = a[min][7]
-    data.so2_value = a[min][8]
-    data.so2_cv = a[min][9]
-    data.cool_temp = a[min][10]
-    data.ambient_temp = a[min][11]
-    data.barometric_p = a[min][12]
-    data.flow = a[min][19] = null ? null : a[min][19].toFixed(1)
-    data.frh = a[min][20] = null ? null : a[min][20].toFixed(1)
-    data.ft = a[min][21] = null ? null : a[min][21].toFixed(1)
-    data.ispu_no2 = a[min][24]
-    data.ispu_co = a[min][25] 
-    data.ispu_o3  = a[min][26]  
-    data.ispu_so2 = a[min][27] 
-    data.ispu_pm25rt = a[min][28] 
+    data.no_value = a[min][d[min].indexOf('NO')]
+    data.no2_value = a[min][d[min].indexOf('NO2')] 
+    data.no2_cv = a[min][d[min].indexOf('NO')]
+    data.nox_value = a[min][d[min].indexOf('NOX')]
+    data.co_value = a[min][d[min].indexOf('CO')]
+    data.co_cv = a[min][d[min].indexOf('CO')]
+    data.o3_value = a[min][d[min].indexOf('O3')]
+    data.o3_cv = a[min][d[min].indexOf('O3_cv')]
+    data.so2_value = a[min][d[min].indexOf('SO2')]
+    data.so2_cv = a[min][d[min].indexOf('SO2_cv')]
+    data.cool_temp = a[min][d[min].indexOf('CoolTemp')]
+    data.ambient_temp = a[min][d[min].indexOf('AT')]
+    data.barometric_p = a[min][d[min].indexOf('BP')]
+    data.flow = a[min][d[min].indexOf('Flow')] = null ? null : a[min][d[min].indexOf('Flow')].toFixed(1)
+    data.frh = a[min][d[min].indexOf('FRH')] = null ? null : a[min][d[min].indexOf('FRH')].toFixed(1)
+    data.ft = a[min][d[min].indexOf('FT')] = null ? null : a[min][d[min].indexOf('FT')].toFixed(1)
+    data.ispu_no2 = a[min][d[min].indexOf('ispu_NO2')]
+    data.ispu_co = a[min][d[min].indexOf('ispu_CO')] 
+    data.ispu_o3  = a[min][d[min].indexOf('ispu_O3')]  
+    data.ispu_so2 = a[min][d[min].indexOf('ispu_SO2')] 
+    data.ispu_pm25rt = a[min][d[min].indexOf('ispu_PM2.5')] 
     data.save();
-    return response.json({data:a[min],keterangan:d[min],total:a[min].length});
+    return response.json({data:a[min],keterangan:d[min],total_keterangan:d[min].length,total_data:a[min].length});
   }
 
   async Location({request, response}){
