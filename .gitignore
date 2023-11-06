@@ -10,7 +10,7 @@ tmp
 
 # The development sqlite file
 database/*.sqlite
-
+public/snpashopts/*
 # VSCode & Webstorm history directories
 .history
 .idea
