@@ -9,8 +9,30 @@ const Device = use('App/Models/Device')
 const domain = 'https://airpointer-2021-00745.recordum.net'
 const excelJS = require("exceljs");
 const Helpers = use('Helpers')
+const { exec } = require('child_process')
 
 class AirpointerController {
+
+  async TesData ({response}) {
+    try {
+      var logs = fs.readFileSync('./public/logs/logs.txt', 'utf8');
+          exec('sh public/createfolder.sh', (err, stdout, stderr) => {
+            console.log('run');
+            if (!err) {
+              console.log(stdout);
+              return fs.writeFileSync("./public/logs/logs.txt",logs +"\n"+ moment() + ' : successfully generated' +"\n"+ stdout  + "==================================================")
+            }else{
+              console.log(err);
+              fs.writeFileSync("./public/logs/logs.txt",logs +"\n"+ moment() +" : "+ err.message)
+            }
+          });
+          
+      } catch (e) {
+        console.log(e);
+          fs.writeFileSync("./public/logs/logs.txt",logs +"\n"+ moment() +" : "+ e.message)
+          // createfile();
+      }
+  }
   cv(x,bm){
     var val = null
     switch (bm) {
