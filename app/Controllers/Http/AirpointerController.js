@@ -466,7 +466,7 @@ class AirpointerController {
             critical_pollutant:{
               critical_pollutant:ispu9or15[0][0].critical_pollutant,
               cp_value:ispu9or15[0][0].cp_value,
-              unit:unit[param.indexOf(ispu_constv[ispu_const.indexOf(ispu9or15[0][0].critical_pollutant)])]
+              unit:unit[param.indexOf(ispu_constv[ispu_const.indexOf(ispu9or15[0][0].critical_pollutant)])]?unit[param.indexOf(ispu_constv[ispu_const.indexOf(ispu9or15[0][0].critical_pollutant)])]:'-'
             },
             ispu_description:(ispu9or15[0][0].ispu_desc.substr(1,ispu9or15[0][0].ispu_desc.length-2)).split(','),
             ispu_color:(ispu9or15[0][0].ispu_color.substr(1,ispu9or15[0][0].ispu_color.length-2)).split(','),
